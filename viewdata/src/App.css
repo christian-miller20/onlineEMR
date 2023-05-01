@@ -1,0 +1,22 @@
+.App {
+  background-color: white;
+}
+
+.table-wrapper {
+  height: 300px; /* set the height as needed */
+  overflow: auto;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid black;
+  padding: 8px;
+}
+
+th {
+  background-color: #f2f2f2;
+}
