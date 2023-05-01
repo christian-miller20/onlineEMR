@@ -10,7 +10,7 @@ create table visits (
     diagnosis varchar(50),          -- eg. wisdom teeth removal, infection, etc.
     ref_patient_id number,          -- NULL unless visit references prior visit
     ref_visit_id number,            -- NULL unless visit references prior visit
-    doctor_name varchar(20)
+    doctor_name varchar(20),
     height varchar(10),
     weight number,
     notes varchar(150),
