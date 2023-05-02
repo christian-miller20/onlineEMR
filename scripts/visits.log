@@ -1,0 +1,58 @@
+
+SQL*Loader: Release 11.2.0.2.0 - Production on Tue May 2 02:23:11 2023
+
+Copyright (c) 1982, 2009, Oracle and/or its affiliates.  All rights reserved.
+
+Control File:   create/load/visits.ctl
+Data File:      data/visits.csv
+  Bad File:     create/load/visits.bad
+  Discard File:  none specified
+ 
+ (Allow all discards)
+
+Number to load: ALL
+Number to skip: 0
+Errors allowed: 50
+Bind array:     64 rows, maximum of 256000 bytes
+Continuation:    none specified
+Path used:      Conventional
+
+Table VISITS, loaded from every logical record.
+Insert option in effect for this table: INSERT
+
+   Column Name                  Position   Len  Term Encl Datatype
+------------------------------ ---------- ----- ---- ---- ---------------------
+PATIENT_ID                          FIRST     *   ,       CHARACTER            
+VISIT_ID                             NEXT     *   ,       CHARACTER            
+VISIT_DATE                           NEXT     *   ,       CHARACTER            
+CHIEF_COMPLAINT                      NEXT     *   ,       CHARACTER            
+VISIT_TYPE                           NEXT     *   ,       CHARACTER            
+DIAGNOSIS                            NEXT     *   ,       CHARACTER            
+REF_PATIENT_ID                       NEXT     *   ,       CHARACTER            
+REF_VISIT_ID                         NEXT     *   ,       CHARACTER            
+DOCTOR_NAME                          NEXT     *   ,       CHARACTER            
+HEIGHT                               NEXT     *   ,       CHARACTER            
+WEIGHT                               NEXT     *   ,       CHARACTER            
+NOTES                                NEXT     *   ,       CHARACTER            
+
+
+Table VISITS:
+  19 Rows successfully loaded.
+  0 Rows not loaded due to data errors.
+  0 Rows not loaded because all WHEN clauses were failed.
+  0 Rows not loaded because all fields were null.
+
+
+Space allocated for bind array:                 198144 bytes(64 rows)
+Read   buffer bytes: 1048576
+
+Total logical records skipped:          0
+Total logical records read:            19
+Total logical records rejected:         0
+Total logical records discarded:        0
+
+Run began on Tue May 02 02:23:11 2023
+Run ended on Tue May 02 02:23:11 2023
+
+Elapsed time was:     00:00:00.05
+CPU time was:         00:00:00.01

@@ -11,7 +11,7 @@ create table visits (
     ref_patient_id number,          -- NULL unless visit references prior visit
     ref_visit_id number,            -- NULL unless visit references prior visit
     doctor_name varchar(20),
-    height varchar(10),
+    height number,
     weight number,
     notes varchar(150),
     constraint visits_pk primary key (patient_id, visit_id)
