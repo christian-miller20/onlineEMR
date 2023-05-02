@@ -1,9 +1,9 @@
-1,1,2,filling,cavity filling #19,1 hr,yes
-2,1,2,filling,cavity filling #20,1 hr,yes
-3,2,1,prescription,infected tooth #32 prescribed antibiotics,2 wk,yes
-4,4,1,filling,broken tooth #21,0.5 hr,yes
-5,2,3,prescription,antiobiotics for gums,2 wk,yes
-6,7,2,implant,implant on #18,2 hr,yes
-7,10,1,prescription,infected tooth #3 prescribed antibiotics,1 wk,no
-8,10,2,root canal,root canal #3,2 hr,yes
-9,2,4,crown,broken crown #13,1hr,yes
+1,1,2,Filling,Cavity Filling #19,1 hr,yes
+2,1,2,Filling,Cavity Filling #20,1 hr,yes
+3,2,1,Prescription,Infected tooth #32 prescribed antibiotics,2 wk,yes
+4,4,1,Filling,Broken tooth #21,0.5 hr,yes
+5,2,3,Prescription,Antiobiotics for gums,2 wk,yes
+6,7,2,Implant,Implant on #18,2 hr,yes
+7,10,1,Prescription,Infected tooth #3 prescribed antibiotics,1 wk,no
+8,10,2,Root Canal,Root Canal #3,2 hr,yes
+9,2,4,Crown,Broken Crown #13,1hr,yes

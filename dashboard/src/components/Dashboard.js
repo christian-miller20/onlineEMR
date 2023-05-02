@@ -47,9 +47,7 @@ function Dashboard(props) {
   };
 
   const handleDataButton = () => {
-    navigate('/data', 
-      {state: {name: name}}
-    );
+    window.location.href = `http://3.95.80.50:8005/viewdata`
   };
 
 
@@ -71,7 +69,7 @@ function Dashboard(props) {
         <Col md={6}>
           <Card style = {{height:"100%"}}>
             <Card.Body>
-              <Card.Title>Search For Patient by Name or ID</Card.Title>
+              <Card.Title>Search For Patient by Name</Card.Title>
               <Form>
                 <FormControl type="text" placeholder="Search" className="mr-sm-2" value={searchQuery} onChange={handleSearchChange} />
               </Form>

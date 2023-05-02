@@ -15,7 +15,8 @@ function ViewData(props) {
   const [result, setResult] = useState([]);
   const [data, setData] = useState([]);
   const [mode, setMode] = useState('chief_complaint');
-  const [complaint, setComplaint] = useState([])
+  // const [complaint, setComplaint] = useState([])
+  const [treatments, setTreatments] = useState([]);
 
   useEffect(() => {
     fetch('http://3.95.80.50:8005/viewdata/pie.php', {
@@ -31,6 +32,11 @@ function ViewData(props) {
       .catch(error => console.log(error));
   }, [mode]);
 
+  useEffect(() => {
+    fetch(`http://3.95.80.50:8005/viewdata/treatments.php`)
+      .then(response => response.json())
+      .then(treatments => setTreatments(treatments));
+  }, []);
 
   // Use this function to get the list of chief_complaints for emergency visits
   // useEffect(() => {
@@ -50,9 +56,11 @@ function ViewData(props) {
     setMode(mode);
   }
   
-
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!query) {
+      return;
+    }
     console.log(JSON.stringify({ 
       "query" : query 
     }));
@@ -68,37 +76,50 @@ function ViewData(props) {
     .catch(error => console.log(error));
   }
 
+  const handleClear = () => {
+    setQuery("");
+    setResult([]);
+  };
+  
+
   return (
   <div>
     <div>
       <BaseNavbar/>
+      <br></br>
     </div>
     <Container>
       <Row>
       <Card>
-        <Card.Body style={{ height: "60%" }} className="d-flex align-items-center justify-content-center">
-          <div style={{ width: "100%" }}>
-            <form className="Auth-form" onSubmit={handleSubmit} style={{ width: "100%" }}>
-              <h3 className="search-bar">Query</h3>
-              <input
-                type="query"
-                className="form-control mt-1"
-                placeholder="Enter SQL Query"
-                name="query"
-                id="query"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              <button type="submit" className="btn btn-primary">
-                Submit
-              </button>
-            </form>
+  <Card.Header>
+    <h3>Query</h3>
+  </Card.Header>
+      <Card.Body className={`d-flex align-items-center justify-content-center ${result.length > 0 ? 'has-results' : ''}`}>
+        <div style={{ width: "100%" }}>
+          <form className="Auth-form" onSubmit={handleSubmit} style={{ width: "100%" }}>
+            <h3 className="search-bar"></h3>
+            <input
+              type="query"
+              className="form-control mt-1"
+              placeholder="Enter SQL Query"
+              name="query"
+              id="query"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+            <button className="btn btn-link" onClick={handleClear}>
+              Clear
+            </button>
+          </form>
+          {result.length > 0 && (
             <div className="table-wrapper" style={{ clear: "both", marginTop: "1rem" }}>
               <table>
                 <thead>
                   <tr>
-                    {result.length > 0 &&
-                      Object.keys(result[0]).map((key) => <th key={key}>{key}</th>)}
+                    {Object.keys(result[0]).map((key) => <th key={key}>{key}</th>)}
                   </tr>
                 </thead>
                 <tbody>
@@ -112,13 +133,17 @@ function ViewData(props) {
                 </tbody>
               </table>
             </div>
-          </div>
-        </Card.Body>
-      </Card>
+          )}
+        </div>
+      </Card.Body>
+    </Card>
+
         <Col md={6}>
           <Card style = {{height:"100%"}}>
+          <Card.Header>
+            <h3>Search Visits By</h3>
+          </Card.Header>
             <Card.Body>
-              <Card.Title>Search Visits By</Card.Title>
               <button className='custom-button' onClick={() => handleButtonClick('chief_complaint')}>Chief Complaint</button>
               <button className='custom-button' onClick={() => handleButtonClick('visit_type')}>Visit Type</button>
               <button className='custom-button' onClick={() => handleButtonClick('doctor_name')}>Doctor</button>
@@ -140,10 +165,27 @@ function ViewData(props) {
         </Col>
         <Col md={6}>
           <Card style={{height:"100%"}}>
-            <Card.Body className="d-flex align-items-center justify-content-center" style={{height: '100%'}}>
-
-
-            </Card.Body>
+          <Card.Header>
+            <h3>Most Common Treatments this Year</h3>
+          </Card.Header>
+          <Card.Body className="d-flex align-items-center justify-content-center" style={{height: '100%'}}>
+              <table style={{ width: '80%', height: '80%' }}>
+                <thead>
+                  <tr>
+                    <th>Treatment</th>
+                    <th>Total YTD</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {treatments.map(item => (
+                    <tr key={item.TREATMENT_TYPE}>
+                      <td>{item.TREATMENT_TYPE}</td>
+                      <td>{item.TOTAL}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+          </Card.Body>
           </Card>
         </Col>
       </Row>

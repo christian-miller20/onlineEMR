@@ -44,11 +44,11 @@ function Auth(props) {
           <div className="Auth-form-content">
             <h3 className="Auth-form-title">Sign In</h3>
             <div className="form-group mt-3">
-              <label>Email address</label>
+              <label>Username</label>
               <input
-                type="email"
+                type="username"
                 className="form-control mt-1"
-                placeholder="Enter email"
+                placeholder="Enter username"
                 name="username" 
                 id="username" 
                 value={username} 
@@ -72,8 +72,8 @@ function Auth(props) {
                 Submit
               </button>
             </div>
+            {errorMessage && <div className="forgot-password text-center mt-2">{errorMessage}</div>}
           </div>
-          {errorMessage && <div className="forgot-password text-center mt-2">{errorMessage}</div>}
         </form>
       </div>
     )
