@@ -1,3 +1,12 @@
 .App {
-  background-color: white;
+  background-color: rgb(29, 29, 29);
+}
+
+ul {
+  list-style-type: square;
+}
+
+li {
+  color: white;
+  font-weight: bold;
 }

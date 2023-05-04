@@ -20,7 +20,9 @@ function BaseNavbar() {
                 <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
                     <Nav.Link onClick={(e) => handleLinkClick('/dashboard')}>Home</Nav.Link>
-                    <Nav.Link onClick={(e) => handleLinkClick('/viewdata')}>View Data</Nav.Link> 
+                    <Nav.Link onClick={(e) => handleLinkClick('/newpatientchart')}>Create New Patient</Nav.Link> 
+                    <Nav.Link onClick={(e) => handleLinkClick('/patientchart')}>Patient Chart</Nav.Link>
+                    <Nav.Link onClick={(e) => handleLinkClick('/viewdata')}>View Data</Nav.Link>
                     <Nav.Link onClick={(e) => handleLinkClick('/settings')}>Settings</Nav.Link>
                 </Nav>
                 <Nav className="m1-auto">

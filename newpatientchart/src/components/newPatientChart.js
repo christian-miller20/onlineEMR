@@ -11,22 +11,13 @@ import {
     Form,
     Accordion,
     ListGroup,
-    Container,
-    FormControl,
     Table} from 'react-bootstrap';
 
 // create patient chart page
-function PatientChart(props) {
+function NewPatientChart(props) {
     // more general things
-    const [visitResults, setVisitResults] = useState([]);
-    const [serverData, setServerData] = useState([]);
-    const [ID2dateDict, setID2dateDict] = useState({});
-    const [refID, setRefID] = useState(null);
-    const [editableRef, setEditableRef] = useState(false);
-    const [patientID, setPatientID] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
-
+    const [selectedDate, setSelectedDate] = useState('View Prior Visit');
+    const [patientID, setPatientID] = useState(null);
 
     // top left part
     const [visitData, setVisitData] = useState({
@@ -44,7 +35,6 @@ function PatientChart(props) {
         WEIGHT: '',
       });
     const [visitUpdated, setVisitUpdated] = useState(false);
-    const [newVisit, setNewVisit] = useState(false);
 
     // top right part
     const [patientGenerics, setPatientGenerics] = useState({
@@ -108,112 +98,6 @@ function PatientChart(props) {
     const [deletedTreatments, setDeletedTreatments] = useState([]);
     const [treatmentsChanged, setTreatmentsChanged] = useState(false);
 
-    const handleSearchChange = (e) => {
-        const query = e.target.value;
-        setSearchQuery(query);
-        if (query.length > 0) {
-          fetch(`http://3.95.80.50:8005/dashboard/search2.php?name=${query}`, {
-            method: 'GET'
-          })
-          .then(response => response.json())
-          .then(data => {
-            console.log(data)
-            setSearchResults(data.slice(0, 5)); // limit to first 5 results
-          })
-          .catch(error => {
-            console.log(error);
-          });
-        } else {
-          setSearchResults([]);
-        }    
-      };
-
-      const handleItemClick = (value) => {
-        console.log(value);
-        setPatientID(value.id);
-        get_all_visits(value.id, 1);
-        setSearchQuery([]);
-        setSearchResults([]);
-      };
-
-      const handleSubmit = (event) => {
-        event.preventDefault();
-        setSearchQuery([]);
-      };
-
-
-    const handleDateSelect = (eventKey) => {
-        const [date, id] = eventKey.split(':');
-        get_visit_info(patientID, id);
-    };
-
-
-    const handleRefSelect = (eventKey) => {
-        const [date, id] = eventKey.split(':');
-        setRefID(id);
-    }
-
-    useEffect(() => {
-        if (refID !== 'choose'){
-            setVisitData((prevVisitData) => ({
-                ...prevVisitData,
-                REF_VISIT_ID: refID,
-            }));            
-        }
-    }, [refID]);
-
-
-
-    // BUTTON HANDLE FOR NEW VISIT IF CLICKED
-    const handleNewVisit = () => {
-        const date = new Date();
-        let dateString = date.toISOString().split('T')[0];        
-        //dateString = 'test_date';
-        const new_visit_id = visitResults.length + 1
-        setVisitData((prevVisitData) => ({
-            ...prevVisitData,
-            VISIT_DATE: dateString,
-            VISIT_ID: new_visit_id,
-            REF_VISIT_ID: null,
-        }));
-        setNewTreatment(
-            {
-                KEYWORD_DESC: '',
-                TREATMENT_TYPE: '',
-                DURATION: '',
-                SUCCESS: false,
-                TREATMENT_ID: '',
-                VISIT_ID: new_visit_id,
-                PATIENT_ID: ''
-              }
-        );
-        setTreatments([]);
-        setVisitUpdated(true);
-        setRefID('choose');
-        setEditableRef(true); 
-        setID2dateDict(prevDict => ({
-            ...prevDict,
-            [new_visit_id]: dateString
-          }));
-        setNewVisit(true);
-    };
-
-    // if patient has prior visits, fetch whatever selected date is and fill in
-    // THE BIG API REQUEST FOR PRETTY MUCH EVERYTHING
-    const get_visit_info = (patient_id, visit_id) => {
-        fetch(
-            `http://3.95.80.50:8005/patientchart/chart3.php?endpoint=get_visit_info&patient_id=${patient_id}&visit_id=${visit_id}`, {
-            method: 'GET'
-        })
-        .then(response => response.json())
-        .then(data => {
-            setServerData(data);
-        })
-        .catch(error => {
-            console.log(error);
-        })
-    };
-
     const postrequest = (e) => {
         e.preventDefault();
         fetch('http://3.95.80.50:8005/patientchart/push2db.php', {
@@ -248,6 +132,7 @@ function PatientChart(props) {
         .then(response => response.json())
         .then(data => data.forEach(value => console.log(value)))
         .then(alert("Patient Visit Updated Successfully"))
+        .then(window.location.reload())
         .catch(error => console.log(error));
 
         // reset change variables
@@ -261,90 +146,50 @@ function PatientChart(props) {
         setMedsChanged(false);
         setFamilyChanged(false);
         setSocialChanged(false);
-        setEditableRef(false);
-        setNewVisit(false);
       }
 
-    // if patient_id provided, fetch request to get_all_visit info.
-    // need to see how to check what patient_id is/if passed along...
-    const get_all_visits = (patient_id) => {
-        return new Promise((resolve, reject) => {
-            fetch(`http://3.95.80.50:8005/patientchart/chart3.php?endpoint=get_all_visits&patient_id=${patient_id}`, {
-                method: 'GET'
-            })
-            .then(response => response.json())
-            .then(data => {
-                setVisitResults(data);
-                resolve(data);
-            })
-            .catch(error => {
-                console.log(error)
-                reject(error);
-            })
-        });
-    }
+
+    const create_new_patient = () => {
+        fetch('http://3.95.80.50:8005/patientchart/newpatient.php', {
+            method: 'GET',
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            setPatientID(data);
+            const date = new Date();
+            let dateString = date.toISOString().split('T')[0];     
+            setSelectedDate(dateString);
+        })
+        .catch(error => console.log(error));
+    };
     
     // calls on first render automatically. 
     useEffect(() => {
-        get_all_visits(patientID);
+        create_new_patient();
     }, []);
-      
-    // CONNOR I ADDED THIS DICTIONARY STUFF HERE FOR THE REFERENTIAL ID PART. THIS WAS A BIT HARDER THAN I THOUGHT TO MAKE LOOK GOOD
-    useEffect(() => {
-    if (visitResults.length > 0) {
-        const sortedResults = visitResults.sort((a, b) => b.VISIT_ID - a.VISIT_ID);
-        const dict = {};
-        sortedResults.forEach((result) => {
-            dict[result.VISIT_ID] = result.VISIT_DATE;
-          });
-        dict['choose'] = 'Choose referring visit if applicable';
-        const most_recent = sortedResults[0];
-        setID2dateDict(dict);
-        setVisitResults(sortedResults);
-        get_visit_info(patientID, most_recent.VISIT_ID);
-    }
-    }, [visitResults]);
 
     useEffect(() => {
-        if (serverData.length > 0){
-            setVisitData(serverData[0]);
-            setTreatments(serverData.slice(9));
-            newTreatment.VISIT_ID = serverData[0].VISIT_ID;
-            newTreatment.PATIENT_ID = serverData[0].PATIENT_ID;
-            setNewTreatment(newTreatment);
-            setPatientGenerics(serverData[1]);
-            setFamilyHistoryList(serverData[2]);
-            setImmunizationList(serverData[3]);
-            setMedsList(serverData[4]);
-            setObstetricList(serverData[5]);
-            setPreExistingList(serverData[6]);
-            setAllergiesList(serverData[7]);
-            setSocialList(serverData[8]);
-            setRefID(serverData[0].REF_VISIT_ID);
+        if (patientID !== null){
+            setVisitData({
+                ...visitData,
+                PATIENT_ID: patientID, 
+                VISIT_ID: 1,
+                VISIT_DATE: selectedDate,
+            });
+
+            setNewTreatment({
+                ...newTreatment,
+                VISIT_ID: 1,
+                PATIENT_ID: patientID,
+            });
+
+            setPatientGenerics({
+                ...patientGenerics,
+                PATIENT_ID: patientID
+            });
         }
-    }, [serverData]);
-
-    // console.log(socialList);
-
-    // console.log(visitUpdated);
-    // console.log(visitResults);
-    // console.log(serverData);
-    console.log(visitData);
-    // console.log(patientChanged);
-    // console.log(patientGenerics);
-    // console.log(familyHistoryList);
-    // console.log(treatments);
-    // console.log(PreExistingList);
-    // console.log(preExistingChanged);
-    // console.log(treatments);
-    // console.log(deletedTreatments);
-    // console.log(treatmentsChanged);
-    // console.log(immunizationList);
-    // console.log(immunizationChanged);
-    // console.log(obstetricList);
-    // console.log(obstetricChanged);
-    // console.log(medsChanged);
-    // console.log(medsList);
+    }, [patientID]);
 
     // handles changes to each of the fields of any treatment (including new one)
     const handleTreatmentsChange = (index, field, value) => {
@@ -383,8 +228,8 @@ function PatientChart(props) {
             DURATION: '',
             SUCCESS: false,
             TREATMENT_ID: '',
-            VISIT_ID: '',
-            PATIENT_ID:''
+            VISIT_ID: 1,
+            PATIENT_ID: patientID
         });
         setTreatmentsChanged(true);
     };
@@ -561,50 +406,19 @@ function PatientChart(props) {
         }
       };
 
+
     return(
         <div>
             <BaseNavbar/>
             <Row style={{padding:'25px'}}>
                 <Col md={8}>
-                <Container>
-                    <Row>
-                        <Card style = {{height:"100%", marginBottom: 20}}>
-                            <Card.Header>
-                                <h3>Search For Patient by Name</h3>
-                            </Card.Header>
-                            <Card.Body>
-                                <Form>
-                                    <FormControl type="text" placeholder="Search" className="mr-sm-2" value={searchQuery} onChange={handleSearchChange} onSubmit={handleSubmit}/>
-                                </Form>
-                                    {searchResults.length > 0 && (        
-                                        <Dropdown>
-                                        <Dropdown.Item disabled>ID: Name, DOB</Dropdown.Item>
-                                        {searchResults.map((result) => (
-                                            <Dropdown.Item key={result.id} onClick={() => handleItemClick(result)}>
-                                            {result.id}: {result.name}, {result.dob}
-                                            </Dropdown.Item>
-                                        ))}
-                                        </Dropdown>
-                                    )}
-                            </Card.Body>
-                        </Card>
-                    </Row>
-                </Container>
                     <Card style={{height:'100%'}}>
                         <Card.Header>
                             <h3>Visit Info</h3>
                             <div className="d-flex justify-content-between">
-                                <Dropdown onSelect={handleDateSelect} className="mr-3">
-                                    <Dropdown.Toggle disabled={newVisit}>{ID2dateDict[visitData.VISIT_ID]}</Dropdown.Toggle>
-                                    <Dropdown.Menu style={{ maxHeight: '100px', overflowY: 'auto' }}>
-                                        {visitResults.map((result) => (
-                                        <Dropdown.Item key={result.VISIT_ID} eventKey={`${result.VISIT_DATE}:${result.VISIT_ID}`}>
-                                            {result.VISIT_DATE}
-                                        </Dropdown.Item>
-                                        ))}
-                                    </Dropdown.Menu>
+                                <Dropdown className="mr-3">
+                                    <Dropdown.Toggle>{selectedDate}</Dropdown.Toggle>
                                 </Dropdown>
-                                {patientID != '' ? <Button variant="primary" className="m1-auto" onClick={handleNewVisit}>Create New Visit</Button> : null}
                             </div>
                         </Card.Header>
                         <Card.Body>
@@ -616,7 +430,7 @@ function PatientChart(props) {
                                             <Form.Label>Chief Complaint</Form.Label>
                                             <Form.Control type="text" 
                                                 placeholder="None" 
-                                                value={visitData?.CHIEF_COMPLAINT ? visitData.CHIEF_COMPLAINT : ''}
+                                                value = {visitData.CHIEF_COMPLAINT} 
                                                 onChange = {(e) => visitChanged('CHIEF_COMPLAINT', e.target.value)}
                                             />
                                         </Form.Group>
@@ -627,10 +441,10 @@ function PatientChart(props) {
                                                     <h6 style={{marginTop:'10px', marginLeft:'10px'}}>Type:</h6>      
                                                 </Col>
                                                 <Col>
-                                                    <Dropdown onSelect={(key) => visitChanged('VISIT_TYPE', key)}>
-                                                        <Dropdown.Toggle style={{ backgroundColor: '#f8f9fa', borderColor: '#f8f9fa', color: '#212529' }}>
-                                                            {visitData.VISIT_TYPE}                                            
-                                                        </Dropdown.Toggle>
+                                                <Dropdown onSelect={(key) => visitChanged('VISIT_TYPE', key)}>
+                                                    <Dropdown.Toggle style={{ backgroundColor: '#f8f9fa', borderColor: '#f8f9fa', color: '#212529' }}>
+                                                        {visitData.VISIT_TYPE}                                            
+                                                    </Dropdown.Toggle>
                                                         <Dropdown.Menu>
                                                             <Dropdown.Item eventKey="Cleaning/Checkup">Cleaning/Checkup</Dropdown.Item>
                                                             <Dropdown.Item eventKey="Emergency">Emergency</Dropdown.Item>
@@ -648,7 +462,7 @@ function PatientChart(props) {
                                                 <Form.Label>Diagnosis</Form.Label>
                                                 <Form.Control type="text" 
                                                     placeholder="None" 
-                                                    value = {visitData?.DIAGNOSIS ? visitData.DIAGNOSIS : ''} 
+                                                    value = {visitData.DIAGNOSIS} 
                                                     onChange = {(e) => visitChanged('DIAGNOSIS', e.target.value)}
                                                 />
                                             </Form.Group>
@@ -674,61 +488,6 @@ function PatientChart(props) {
                                     </Row>
                                 </Card.Body>
                             </Card>
-                            {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            }
-                            <div style={{marginTop:'20px'}}>
-                                <h6>Referring Visit Date: </h6>
-                                <Dropdown  onSelect={handleRefSelect} className="mr-3" >
-                                    <Dropdown.Toggle disabled={!editableRef}>{ID2dateDict[refID]}</Dropdown.Toggle>
-                                    <Dropdown.Menu style={{ maxHeight: '100px', overflowY: 'auto' }}>
-                                        {visitResults.map((result) => (
-                                        <Dropdown.Item key={result.VISIT_ID} eventKey={`${result.VISIT_DATE}:${result.VISIT_ID}`}>
-                                            {result.VISIT_DATE}
-                                        </Dropdown.Item>
-                                        ))}
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </div>
-                            {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            }
                         </Card.Body>
                     </Card>
                 </Col>
@@ -740,6 +499,7 @@ function PatientChart(props) {
                         <Card.Body>
                             <Row>
                                 <Col>
+                                {/* EXAMPLE OF FETCHING DATA FROM API AND IMPLEMENTING HERE!!! */}
                                     <h6 style={{marginTop:'10px'}}>ID: {visitData.PATIENT_ID}</h6>
                                 </Col>
                                 <Col>
@@ -759,7 +519,7 @@ function PatientChart(props) {
                                 <Form.Label>First Name</Form.Label>
                                 <Form.Control type="text" 
                                     placeholder="None" 
-                                    value = {patientGenerics?.FIRST_NAME ? patientGenerics.FIRST_NAME : ''} 
+                                    value = {patientGenerics.FIRST_NAME} 
                                     onChange = {(e) => updatePatientInfo('FIRST_NAME', e.target.value)}
                                 />
                             </Form.Group>
@@ -767,7 +527,7 @@ function PatientChart(props) {
                                 <Form.Label>Last Name</Form.Label>
                                 <Form.Control type="text" 
                                     placeholder="None" 
-                                    value = {patientGenerics?.LAST_NAME ? patientGenerics.LAST_NAME : ''} 
+                                    value = {patientGenerics.LAST_NAME} 
                                     onChange = {(e) => updatePatientInfo('LAST_NAME', e.target.value)}
                                 />
                             </Form.Group>
@@ -775,7 +535,7 @@ function PatientChart(props) {
                                 <Form.Label>DOB</Form.Label>
                                 <Form.Control type="text" 
                                     placeholder="yyyy-mm-dd" 
-                                    value = {patientGenerics?.DOB ? patientGenerics.DOB : ''} 
+                                    value = {patientGenerics.DOB} 
                                     onChange = {(e) => updatePatientInfo('DOB', e.target.value)}
                                 />
                             </Form.Group>
@@ -790,7 +550,7 @@ function PatientChart(props) {
                                                         <Form.Label>Weight</Form.Label>
                                                         <Form.Control type="number" 
                                                             placeholder="None" 
-                                                            value = {visitData?.WEIGHT ? visitData.WEIGHT : ''} 
+                                                            value = {visitData.WEIGHT} 
                                                             onChange = {(e) => visitChanged('WEIGHT', e.target.value)}
                                                         />
                                                     </Form.Group>
@@ -800,7 +560,7 @@ function PatientChart(props) {
                                                         <Form.Label>Height</Form.Label>
                                                         <Form.Control type="text" 
                                                             placeholder="None" 
-                                                            value = {visitData?.HEIGHT ? visitData.HEIGHT : ''} 
+                                                            value = {visitData.HEIGHT} 
                                                             onChange = {(e) => visitChanged('HEIGHT', e.target.value)}
                                                         />
                                                     </Form.Group>
@@ -809,7 +569,7 @@ function PatientChart(props) {
                                             <Form.Group controlId="RACE">
                                                 <Form.Label>Race</Form.Label>
                                                 <Form.Control type="text" 
-                                                    value = {patientGenerics?.RACE ? patientGenerics.RACE : ''} 
+                                                    value = {patientGenerics.RACE} 
                                                     onChange = {(e) => updatePatientInfo('RACE', e.target.value)}
                                                 />
                                             </Form.Group>
@@ -817,14 +577,14 @@ function PatientChart(props) {
                                                 <Form.Label>PHONE</Form.Label>
                                                 <Form.Control type="text" 
                                                     placeholder="XXX-XXX-XXXX" 
-                                                    value = {patientGenerics?.PHONE ? patientGenerics.PHONE : ''} 
+                                                    value = {patientGenerics.PHONE} 
                                                     onChange = {(e) => updatePatientInfo('PHONE', e.target.value)}
                                                 />
                                             </Form.Group>
                                             <Form.Group controlId="LANGUAGE">
                                                 <Form.Label>Preferred Language</Form.Label>
                                                 <Form.Control type="text" 
-                                                    value = {patientGenerics?.PREF_LANGUAGE ? patientGenerics.PREF_LANGUAGE : ''} 
+                                                    value = {patientGenerics.PREF_LANGUAGE} 
                                                     onChange = {(e) => updatePatientInfo('PREF_LANGUAGE', e.target.value)}
                                                 />
                                             </Form.Group>
@@ -833,31 +593,31 @@ function PatientChart(props) {
                                                 <Form.Label>Street 1</Form.Label>
                                                 <Form.Control type="text" 
                                                     placeholder="None" 
-                                                    value = {patientGenerics?.STREET1 ? patientGenerics.STREET1 : ''} 
+                                                    value = {patientGenerics.STREET1} 
                                                     onChange = {(e) => updatePatientInfo('STREET1', e.target.value)}
                                                 />
                                                 <Form.Label>Street 2</Form.Label>
                                                 <Form.Control type="text" 
                                                     placeholder="None" 
-                                                    value = {patientGenerics?.STREET2 ? patientGenerics.STREET2 : ''} 
+                                                    value = {patientGenerics.STREET2} 
                                                     onChange = {(e) => updatePatientInfo('STREET2', e.target.value)}
                                                 />
                                                 <Form.Label>City</Form.Label>
                                                 <Form.Control type="text" 
                                                     placeholder="None" 
-                                                    value = {patientGenerics?.CITY ? patientGenerics.CITY : ''} 
+                                                    value = {patientGenerics.CITY} 
                                                     onChange = {(e) => updatePatientInfo('CITY', e.target.value)}
                                                 />
                                                 <Form.Label>State</Form.Label>
                                                 <Form.Control type="text" 
                                                     placeholder="None" 
-                                                    value = {patientGenerics?.STATE ? patientGenerics.STATE : ''} 
+                                                    value = {patientGenerics.STATE} 
                                                     onChange = {(e) => updatePatientInfo('STATE', e.target.value)}
                                                 />
                                                 <Form.Label>Zip</Form.Label>
                                                 <Form.Control type="text" 
                                                     placeholder="None" 
-                                                    value = {patientGenerics?.ZIP ? patientGenerics.ZIP : ''} 
+                                                    value = {patientGenerics.ZIP} 
                                                     onChange = {(e) => updatePatientInfo('ZIP', e.target.value)}
                                                 />
                                             </Form.Group>
@@ -998,19 +758,19 @@ function PatientChart(props) {
                                                     <tbody>
                                                         <tr>
                                                             <td onDoubleClick={() => handleCellClick('ALCOHOL')}>
-                                                                {socialList?.ALCOHOL ? socialList.ALCOHOL : 'NONE'}
+                                                                {socialList.ALCOHOL ? socialList.ALCOHOL : 'NONE'}
                                                             </td>
                                                             <td onDoubleClick={() => handleCellClick('EXERCISE')}>
-                                                                {socialList?.EXERCISE ? socialList.EXERCISE : 'NONE'}
+                                                                {socialList.EXERCISE ? socialList.EXERCISE : 'NONE'}
                                                             </td>
                                                             <td onDoubleClick={() => handleCellClick('MARRIAGE')}>
-                                                                {socialList?.MARRIAGE ? socialList.MARRIAGE : 'NONE'}
+                                                                {socialList.MARRIAGE ? socialList.MARRIAGE : 'NONE'}
                                                             </td>
                                                             <td onDoubleClick={() => handleCellClick('OCCUPATION')}>
-                                                                {socialList?.OCCUPATION ? socialList.OCCUPATION : 'NONE'}
+                                                                {socialList.OCCUPATION ? socialList.OCCUPATION : 'NONE'}
                                                             </td>
                                                             <td onDoubleClick={() => handleCellClick('SMOKING')}>
-                                                                {socialList?.SMOKING ? socialList.SMOKING : 'NONE'}
+                                                                {socialList.SMOKING ? socialList.SMOKING : 'NONE'}
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -1159,7 +919,7 @@ function PatientChart(props) {
                                 <Form.Label>Notes</Form.Label>
                                 <Form.Control type="text" 
                                     placeholder="None" 
-                                    value = {visitData?.NOTES ? visitData.NOTES : ''} 
+                                    value = {visitData.NOTES} 
                                     onChange = {(e) => visitChanged('NOTES', e.target.value)}
                                 />
                             </Form.Group>
@@ -1168,12 +928,14 @@ function PatientChart(props) {
                 </Col>
             </Row>
             <Row>
-                <Button variant="primary" onClick={postrequest} className="mx-auto d-block" style={{marginBottom:'10px'}}>Save Changes</Button>
-                {visitUpdated || patientChanged || preExistingChanged || treatmentsChanged || immunizationChanged || obstetricChanged || allergiesChanged || medsChanged || familyChanged || socialChanged || editableRef || newVisit ? (
+                {visitUpdated || patientChanged || preExistingChanged || treatmentsChanged || immunizationChanged || obstetricChanged || allergiesChanged || medsChanged || familyChanged || socialChanged ? (
+                    <Button variant="primary" onClick={postrequest} className="mx-auto d-block" style={{marginBottom:'10px'}}>Add Patient</Button>) : null}
+                {visitUpdated || patientChanged || preExistingChanged || treatmentsChanged || immunizationChanged || obstetricChanged || allergiesChanged || medsChanged || familyChanged || socialChanged ? (
                     <Button variant="primary" onClick={() => window.location.reload()} className="mx-auto d-block bg-danger" style={{marginBottom:'10px'}}>Cancel Changes</Button>) : null}
             </Row>
         </div>
     );
 }
 
-export default PatientChart;
+export default NewPatientChart;
+
