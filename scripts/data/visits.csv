@@ -13,7 +13,7 @@
 8,1,2023-10-02,None,Cleaning/Checkup,None,,,Ding,65,125,None
 9,1,2023-10-19,Routine Checkup,Cleaning/Checkup,Everything Looks Good,,,Miller,64,140,None
 7,2,2023-10-23,Root Canal,Surgery,Root Canal Needed,7,1,Ding,68,160,no issues
-9,2,2023-10-27,Gum Pain,Cleaning/Checkup,Some Swelling Good,,,Miller,64,140,None
+9,2,2023-10-27,Gum Pain,Cleaning/Checkup,Some Swelling,,,Miller,64,140,None
 10,1,2023-11-07,Toothache,Emergency,Infected tooth,,,Ding,69,150,Prescribed antibiotics and scheduled root canal
 10,2,2023-11-14,Toothache,Procedure,Needs a Filling,10,1,Ding,69,150,None
 2,4,2023-11-17,Broken Crown,Procedure,Needs a Crown Replacement,2,3,Miller,70,160,Hard of hearing
