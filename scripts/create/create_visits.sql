@@ -4,7 +4,7 @@ create table visits (
     patient_id number
         constraint vis_patient_id_fk references patients (patient_id),
     visit_id number,
-    visit_date varchar(20),
+    visit_date date,
     chief_complaint varchar(100),
     visit_type varchar(50),         -- eg. post-op, checkup, surgery, emergency, complication
     diagnosis varchar(50),          -- eg. wisdom teeth removal, infection, etc.

@@ -246,8 +246,9 @@ function PatientChart(props) {
           })
         })
         .then(response => response.json())
-        .then(data => data.forEach(value => console.log(value)))
-        .then(alert("Patient Visit Updated Successfully"))
+        .then(data => data.forEach(value => {
+            alert("Update for " + value.split('update')[1]);
+        }))
         .catch(error => console.log(error));
 
         // reset change variables
@@ -289,7 +290,6 @@ function PatientChart(props) {
         get_all_visits(patientID);
     }, []);
       
-    // CONNOR I ADDED THIS DICTIONARY STUFF HERE FOR THE REFERENTIAL ID PART. THIS WAS A BIT HARDER THAN I THOUGHT TO MAKE LOOK GOOD
     useEffect(() => {
     if (visitResults.length > 0) {
         const sortedResults = visitResults.sort((a, b) => b.VISIT_ID - a.VISIT_ID);
@@ -323,28 +323,6 @@ function PatientChart(props) {
             setRefID(serverData[0].REF_VISIT_ID);
         }
     }, [serverData]);
-
-    // console.log(socialList);
-
-    // console.log(visitUpdated);
-    // console.log(visitResults);
-    // console.log(serverData);
-    console.log(visitData);
-    // console.log(patientChanged);
-    // console.log(patientGenerics);
-    // console.log(familyHistoryList);
-    // console.log(treatments);
-    // console.log(PreExistingList);
-    // console.log(preExistingChanged);
-    // console.log(treatments);
-    // console.log(deletedTreatments);
-    // console.log(treatmentsChanged);
-    // console.log(immunizationList);
-    // console.log(immunizationChanged);
-    // console.log(obstetricList);
-    // console.log(obstetricChanged);
-    // console.log(medsChanged);
-    // console.log(medsList);
 
     // handles changes to each of the fields of any treatment (including new one)
     const handleTreatmentsChange = (index, field, value) => {
@@ -674,26 +652,6 @@ function PatientChart(props) {
                                     </Row>
                                 </Card.Body>
                             </Card>
-                            {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            }
                             <div style={{marginTop:'20px'}}>
                                 <h6>Referring Visit Date: </h6>
                                 <Dropdown  onSelect={handleRefSelect} className="mr-3" >
@@ -707,28 +665,6 @@ function PatientChart(props) {
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </div>
-                            {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            }
                         </Card.Body>
                     </Card>
                 </Col>
@@ -990,7 +926,7 @@ function PatientChart(props) {
                                                         <tr>
                                                             <th>Alcohol Use</th>
                                                             <th>Excercise</th>
-                                                            <th>Martial Status</th>
+                                                            <th>Marital Status</th>
                                                             <th>Occupation</th>
                                                             <th>Smoking Use</th>
                                                         </tr>
@@ -1089,7 +1025,7 @@ function PatientChart(props) {
                                         <Accordion.Header>Treatment {index + 1}</Accordion.Header>
                                         <Accordion.Body>
                                             <Form.Group controlId={`treatmentKeyword-${index}`}>
-                                                <Form.Label>Keyword Desc</Form.Label>
+                                                <Form.Label>Keyword Description</Form.Label>
                                                 <Form.Control type="text" placeholder="None" value={treatment.KEYWORD_DESC} onChange={e => handleTreatmentsChange(index, 'KEYWORD_DESC', e.target.value)}/>
                                             </Form.Group>
                                             <Form.Group controlId={`treatmentType-${index}`}>

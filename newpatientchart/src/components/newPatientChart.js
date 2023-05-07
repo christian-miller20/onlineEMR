@@ -130,9 +130,10 @@ function NewPatientChart(props) {
           })
         })
         .then(response => response.json())
-        .then(data => data.forEach(value => console.log(value)))
-        .then(alert("Patient Visit Updated Successfully"))
-        .then(window.location.reload())
+        .then(data => data.forEach(value => {
+            alert("Update for " + value.split('update')[1]);
+            console.log(value);
+        }))
         .catch(error => console.log(error));
 
         // reset change variables
@@ -750,7 +751,7 @@ function NewPatientChart(props) {
                                                         <tr>
                                                             <th>Alcohol Use</th>
                                                             <th>Excercise</th>
-                                                            <th>Martial Status</th>
+                                                            <th>Marital Status</th>
                                                             <th>Occupation</th>
                                                             <th>Smoking Use</th>
                                                         </tr>
@@ -849,7 +850,7 @@ function NewPatientChart(props) {
                                         <Accordion.Header>Treatment {index + 1}</Accordion.Header>
                                         <Accordion.Body>
                                             <Form.Group controlId={`treatmentKeyword-${index}`}>
-                                                <Form.Label>Keyword Desc</Form.Label>
+                                                <Form.Label>Keyword Description</Form.Label>
                                                 <Form.Control type="text" placeholder="None" value={treatment.KEYWORD_DESC} onChange={e => handleTreatmentsChange(index, 'KEYWORD_DESC', e.target.value)}/>
                                             </Form.Group>
                                             <Form.Group controlId={`treatmentType-${index}`}>
@@ -928,9 +929,9 @@ function NewPatientChart(props) {
                 </Col>
             </Row>
             <Row>
-                {visitUpdated || patientChanged || preExistingChanged || treatmentsChanged || immunizationChanged || obstetricChanged || allergiesChanged || medsChanged || familyChanged || socialChanged ? (
+                {(visitUpdated && patientChanged) ? (
                     <Button variant="primary" onClick={postrequest} className="mx-auto d-block" style={{marginBottom:'10px'}}>Add Patient</Button>) : null}
-                {visitUpdated || patientChanged || preExistingChanged || treatmentsChanged || immunizationChanged || obstetricChanged || allergiesChanged || medsChanged || familyChanged || socialChanged ? (
+                {(visitUpdated && patientChanged) ? (
                     <Button variant="primary" onClick={() => window.location.reload()} className="mx-auto d-block bg-danger" style={{marginBottom:'10px'}}>Cancel Changes</Button>) : null}
             </Row>
         </div>

@@ -1,0 +1,15 @@
+.App {
+  background-color: rgb(29, 29, 29);
+}
+
+
+.Auth-form-title,
+.form-group label {
+  color: white;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: rgb(29, 29, 29);
+}

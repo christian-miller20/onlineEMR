@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { PieChart } from 'react-minimal-pie-chart'
 import BaseNavbar from './BaseNavbar';
+import schemaImage from './images/schema.png';
+
 import { 
   Container, 
   Row, 
@@ -15,8 +17,8 @@ function ViewData(props) {
   const [result, setResult] = useState([]);
   const [data, setData] = useState([]);
   const [mode, setMode] = useState('chief_complaint');
-  // const [complaint, setComplaint] = useState([])
   const [treatments, setTreatments] = useState([]);
+
 
   useEffect(() => {
     fetch('http://3.95.80.50:8005/viewdata/pie.php', {
@@ -37,20 +39,6 @@ function ViewData(props) {
       .then(response => response.json())
       .then(treatments => setTreatments(treatments));
   }, []);
-
-  // Use this function to get the list of chief_complaints for emergency visits
-  // useEffect(() => {
-  //   fetch('http://3.95.80.50:8005/viewdata/emergency.php', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({ 
-  //       "mode" : mode 
-  //     })
-  //   })
-  //     .then(response => response.json())
-  //     .then(complaint => setComplaint(complaint))
-  //     .catch(error => console.log(error));
-  // }, []);
 
   const handleButtonClick = (mode) => {
     setMode(mode);
@@ -137,7 +125,6 @@ function ViewData(props) {
         </div>
       </Card.Body>
     </Card>
-
         <Col md={6}>
           <Card style = {{height:"100%"}}>
           <Card.Header>
@@ -189,6 +176,21 @@ function ViewData(props) {
           </Card>
         </Col>
       </Row>
+    </Container>
+    <br></br>
+    <Container>
+      <Card >
+      <Card.Header>
+    <h3>Schema</h3>
+      </Card.Header>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <img
+          src={schemaImage}
+          alt="Schema"
+          style={{ cursor: 'pointer', width: '80%' }}
+        />
+        </div>
+      </Card>
     </Container>
   </div>
   );
